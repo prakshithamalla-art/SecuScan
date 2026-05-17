@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../components/ThemeContext'
 import { useToast } from '../components/ToastContext'
 
-// ========== NEW INTERFACES (TYPE SAFETY) ==========
+// ========== INTERFACES (TYPE SAFETY) ==========
 
 interface InputFieldProps {
   label: string;
@@ -43,8 +43,8 @@ const itemVariants = {
 const DEFAULT_CONFIG = {
     concurrentScans: 8,
     scanTimeout: 3600,
-    scanIntensity: 'standard', // 'low', 'standard', 'aggressive'
-    dataRetention: 30, // days
+    scanIntensity: 'standard',
+    dataRetention: 30,
     shodanKey: '',
     virustotalKey: '',
     ipWhitelist: '127.0.0.1\n10.0.0.0/8',
@@ -104,7 +104,7 @@ export default function Settings() {
     const handleExport = () => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
         const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("href", dataStr);
         downloadAnchorNode.setAttribute("download", `secuscan_config_${new Date().toISOString().split('T')[0]}.json`);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
@@ -112,7 +112,6 @@ export default function Settings() {
         addToast("Encryption export successful", "success")
     }
 
-    // FIXED: InputField with proper typing (no any)
     const InputField = ({ label, description, type = "text", value, onChange, placeholder }: InputFieldProps) => (
         <div className="bg-charcoal border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all group">
             <div className="space-y-2 mb-6">
@@ -129,7 +128,6 @@ export default function Settings() {
         </div>
     )
 
-    // FIXED: SelectField with proper typing (no any)
     const SelectField = ({ label, description, value, onChange, options }: SelectFieldProps) => (
         <div className="bg-charcoal border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all group">
             <div className="space-y-2 mb-6">
@@ -148,7 +146,6 @@ export default function Settings() {
         </div>
     )
 
-    // FIXED: Toggle with proper typing (no any)
     const Toggle = ({ checked, onChange, label, description }: ToggleProps) => (
         <button 
             onClick={() => onChange(!checked)}
@@ -168,7 +165,6 @@ export default function Settings() {
 
     return (
         <div className="min-h-screen bg-charcoal-dark text-silver p-6 md:p-12 space-y-12">
-            
             <header className="relative flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-12 border-b-4 border-silver-bright/10 font-black">
                 <div className="space-y-4">
                   <div className="bg-rag-blue text-black px-4 py-1 text-xs uppercase tracking-widest inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black">
@@ -181,7 +177,6 @@ export default function Settings() {
                     HARDWARE_TUNING // AUDIT_STRATEGY // SECTOR_ISOLATION
                   </p>
                 </div>
-
                 <div className="flex flex-col items-end gap-4">
                    <div className="bg-charcoal border-4 border-black px-8 py-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                         <span className="text-[10px] font-black text-silver/20 uppercase tracking-[0.4em] block mb-1 italic">SYSTEM_TIMEZONE_SYNC</span>
@@ -192,7 +187,6 @@ export default function Settings() {
 
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-12 pt-4">
                 <main className="xl:col-span-3 space-y-20">
-                    
                     <section className="space-y-8">
                         <div className="flex items-center gap-4">
                             <h3 className="text-xs font-black text-silver-bright uppercase tracking-[0.4em] italic">Engine_Parameters</h3>
@@ -203,7 +197,7 @@ export default function Settings() {
                                 label="Scanner_Intensity" 
                                 description="PACKET_DENSITY_PER_SECOND_THRESHOLD"
                                 value={config.scanIntensity}
-                                onChange={(val) => setConfig({...config, scanIntensity: val as string})}
+                                onChange={(val) => setConfig({...config, scanIntensity: String(val)})}
                                 options={[
                                     { label: 'Low (Stealth/Passive)', value: 'low' },
                                     { label: 'Standard (Balanced)', value: 'standard' },
@@ -214,7 +208,7 @@ export default function Settings() {
                                 label="Retention_Cycle" 
                                 description="AUTOMATED_LOG_PURGE_STRATEGY"
                                 value={config.dataRetention}
-                                onChange={(val) => setConfig({...config, dataRetention: val as number})}
+                                onChange={(val) => setConfig({...config, dataRetention: Number(val)})}
                                 options={[
                                     { label: '7 Days', value: 7 },
                                     { label: '30 Days', value: 30 },
@@ -227,14 +221,14 @@ export default function Settings() {
                                 description="MAX_PARALLEL_TASK_EXECUTION"
                                 type="number"
                                 value={config.concurrentScans}
-                                onChange={(val) => setConfig({...config, concurrentScans: val as number})}
+                                onChange={(val) => setConfig({...config, concurrentScans: Number(val)})}
                             />
                             <InputField 
                                 label="Execution_Timeout" 
                                 description="THRESHOLD_IN_SECONDS_PER_NODE"
                                 type="number"
                                 value={config.scanTimeout}
-                                onChange={(val) => setConfig({...config, scanTimeout: val as number})}
+                                onChange={(val) => setConfig({...config, scanTimeout: Number(val)})}
                             />
                         </div>
                     </section>
@@ -249,7 +243,7 @@ export default function Settings() {
                                 label="Temporal_Logic" 
                                 description="UI_CHRONOS_ALIGNMENT"
                                 value={config.timezone}
-                                onChange={(val) => setConfig({...config, timezone: val as string})}
+                                onChange={(val) => setConfig({...config, timezone: String(val)})}
                                 options={[
                                     { label: `Follow System (${systemTimezone})`, value: 'auto' },
                                     { label: 'UTC (Universal Coordinated)', value: 'UTC' },
@@ -260,7 +254,7 @@ export default function Settings() {
                                 label="Visual_Spectrum" 
                                 description="OPERATIONAL_AESTHETIC_MODE"
                                 value={config.theme}
-                                onChange={(val) => setConfig({...config, theme: val as string})}
+                                onChange={(val) => setConfig({...config, theme: String(val)})}
                                 options={[
                                     { label: 'Dark (Obsidian)', value: 'dark' },
                                     { label: 'Light (Paper)', value: 'light' },
@@ -281,7 +275,7 @@ export default function Settings() {
                                 placeholder="SHODAN_SECRET"
                                 type="password"
                                 value={config.shodanKey}
-                                onChange={(val) => setConfig({...config, shodanKey: val as string})}
+                                onChange={(val) => setConfig({...config, shodanKey: String(val)})}
                             />
                             <InputField 
                                 label="VirusTotal_Enclave" 
@@ -289,7 +283,7 @@ export default function Settings() {
                                 placeholder="VT_SECRET_HASH"
                                 type="password"
                                 value={config.virustotalKey}
-                                onChange={(val) => setConfig({...config, virustotalKey: val as string})}
+                                onChange={(val) => setConfig({...config, virustotalKey: String(val)})}
                             />
                         </div>
                     </section>
